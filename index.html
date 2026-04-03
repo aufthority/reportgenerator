@@ -44,6 +44,73 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* ── Nav bar ────────────────────────────────────────────────── */
+.nav-bar {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  display: flex; overflow-x: auto;
+  padding: 0 16px; gap: 0;
+  -webkit-overflow-scrolling: touch;
+}
+.nav-bar::-webkit-scrollbar { display: none; }
+.nav-tab {
+  flex-shrink: 0; padding: 0 18px; height: 44px;
+  display: flex; align-items: center; gap: 7px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px; font-weight: 500;
+  color: var(--text-muted); cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: var(--transition); white-space: nowrap;
+  user-select: none; text-decoration: none;
+}
+.nav-tab:hover { color: var(--text-primary); background: var(--kpj-green-pale); }
+.nav-tab.active { color: var(--kpj-green); border-bottom-color: var(--kpj-green); font-weight: 600; }
+.nav-tab svg { width: 14px; height: 14px; flex-shrink: 0; opacity: .65; }
+.nav-tab.active svg { opacity: 1; }
+
+/* ── Coming soon modal ──────────────────────────────────────── */
+.cs-overlay {
+  display: none; position: fixed; inset: 0; z-index: 500;
+  background: rgba(0,0,0,.45);
+  align-items: center; justify-content: center;
+}
+.cs-overlay.show { display: flex; }
+.cs-modal {
+  background: var(--white); border-radius: var(--radius-xl);
+  border: 1px solid var(--border);
+  padding: 32px 28px 24px; width: 300px; max-width: 90vw;
+  text-align: center; animation: fadeUp .22s ease both;
+}
+.cs-chip {
+  display: inline-block; font-size: 10px; font-weight: 600;
+  letter-spacing: .07em; text-transform: uppercase;
+  padding: 3px 11px; border-radius: 20px;
+  background: var(--kpj-gold-lt); color: #7A5E1A;
+  border: 1px solid rgba(201,168,76,.35); margin-bottom: 14px;
+}
+.cs-icon {
+  width: 48px; height: 48px; border-radius: 50%;
+  background: var(--kpj-green-lt);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 14px;
+}
+.cs-title {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 16px; font-weight: 700;
+  color: var(--text-primary); margin-bottom: 8px;
+}
+.cs-desc {
+  font-size: 13px; color: var(--text-secondary);
+  line-height: 1.6; margin-bottom: 20px;
+}
+.cs-btn {
+  width: 100%; padding: 11px; border: none; border-radius: var(--radius-md);
+  background: var(--kpj-green); color: var(--white);
+  font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
+  cursor: pointer; transition: var(--transition);
+}
+.cs-btn:hover { background: #134D2E; }
+
 /* ── Topbar ─────────────────────────────────────────────────────── */
 .topbar {
   background: var(--kpj-green);
@@ -429,6 +496,48 @@ footer {
 
   </div>
 </header>
+<!-- Nav bar -->
+<nav class="nav-bar">
+  <div class="nav-tab active" onclick="navClick(event,'ce')">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="2" y="2" width="12" height="12" rx="2"/><line x1="5" y1="6" x2="11" y2="6"/><line x1="5" y1="9" x2="11" y2="9"/><line x1="5" y1="12" x2="8" y2="12"/>
+    </svg>
+    Course Evaluation
+  </div>
+  <div class="nav-tab" onclick="navClick(event,'exam')">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="2" y="1" width="12" height="14" rx="2"/><line x1="5" y1="5" x2="11" y2="5"/><line x1="5" y1="8" x2="11" y2="8"/><polyline points="5,11 7,13 11,9"/>
+    </svg>
+    Exam Report
+  </div>
+  <div class="nav-tab" onclick="navClick(event,'att')">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="2" y="3" width="12" height="11" rx="1.5"/><line x1="5" y1="1" x2="5" y2="5"/><line x1="11" y1="1" x2="11" y2="5"/><line x1="2" y1="7" x2="14" y2="7"/>
+    </svg>
+    Attendance Report
+  </div>
+  <div class="nav-tab" onclick="navClick(event,'cpd')">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="8" cy="8" r="6"/><line x1="8" y1="5" x2="8" y2="8"/><line x1="8" y1="8" x2="10.5" y2="10"/>
+    </svg>
+    CPD Budget
+  </div>
+</nav>
+
+<!-- Coming soon modal -->
+<div class="cs-overlay" id="csOverlay" onclick="csClose(event)">
+  <div class="cs-modal">
+    <div class="cs-chip">Coming soon</div>
+    <div class="cs-icon">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="#1B5E3B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="9"/><line x1="11" y1="7" x2="11" y2="11.5"/><circle cx="11" cy="14.5" r=".9" fill="#1B5E3B" stroke="none"/>
+      </svg>
+    </div>
+    <div class="cs-title" id="csTitle">Exam Report</div>
+    <div class="cs-desc" id="csDesc">This report module is currently in development and will be available in a future update.</div>
+    <button class="cs-btn" onclick="csClose()">Got it</button>
+  </div>
+</div>
 
 <!-- Hero -->
 <section class="hero">
@@ -1013,6 +1122,23 @@ async function generatePDF(code, date) {
 
   doc.save(`KPJU_AdminSOP_${code}_${date}.pdf`);
 }
+
+// ── Nav bar ───────────────────────────────────────────────────────────────────
+const _csLabels = {
+  exam: 'Exam Report',
+  att:  'Attendance Report',
+  cpd:  'CPD Budget',
+};
+function navClick(e, tab) {
+  if (tab === 'ce') return; // already active, do nothing
+  document.getElementById('csTitle').textContent = _csLabels[tab];
+  document.getElementById('csDesc').textContent =
+    _csLabels[tab] + ' is currently in development and will be available in a future update.';
+  document.getElementById('csOverlay').classList.add('show');
+}
+function csClose(e) {
+  if (e && e.target !== document.getElementById('csOverlay') && !e.target.classList.contains('cs-btn')) return;
+  document.getElementById('csOverlay').classList.remove('show');
+}
+
 </script>
-</body>
-</html>
