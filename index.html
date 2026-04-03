@@ -648,24 +648,40 @@ function resetDownloads() {
   document.getElementById('dlPdf').classList.remove('show');
 }
 
-// ── CSV parser ────────────────────────────────────────────────────────────────
+// ── CSV parser (RFC 4180 — quotes only valid at field start) ─────────────────
 function parseCSV(text) {
+  // Split into lines respecting quoted newlines
   const lines = []; let cur = '', inQ = false;
   for (let ch of text) {
-    if (ch === '"') inQ = !inQ;
+    if (ch === '"' && !inQ) { inQ = true; cur += ch; }
+    else if (ch === '"' && inQ) { inQ = false; cur += ch; }
     else if (ch === '\n' && !inQ) { lines.push(cur); cur = ''; }
     else cur += ch;
   }
   if (cur.trim()) lines.push(cur);
+
   return lines.map(line => {
-    const cols = []; let f = '', q = false;
+    const cols = []; let f = '', inQuotes = false;
     for (let i = 0; i < line.length; i++) {
       const c = line[i];
-      if (c === '"') q = !q;
-      else if (c === ',' && !q) { cols.push(f.replace(/^"|"$/g,'').trim()); f = ''; }
-      else f += c;
+      if (c === '"' && !inQuotes && f.trim() === '') {
+        // Opening quote — only valid at field start (empty field so far)
+        inQuotes = true;
+      } else if (c === '"' && inQuotes) {
+        // Check for escaped double-quote ""
+        if (i + 1 < line.length && line[i + 1] === '"') {
+          f += '"'; i++;
+        } else {
+          inQuotes = false; // closing quote
+        }
+      } else if (c === ',' && !inQuotes) {
+        cols.push(f.trim());
+        f = '';
+      } else {
+        f += c;
+      }
     }
-    cols.push(f.replace(/^"|"$/g,'').trim());
+    cols.push(f.trim());
     return cols;
   });
 }
